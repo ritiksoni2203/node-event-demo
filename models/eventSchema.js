@@ -5,7 +5,7 @@ const eventSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    date: {
+    datetime: {
         type: Date,
         required: true
     },
@@ -17,6 +17,8 @@ const eventSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
     }],
-})
+});
 
-module.exports = mongoose.model('Event', eventSchema);
+const Event = mongoose.model('Event', eventSchema);
+
+module.exports = Event;

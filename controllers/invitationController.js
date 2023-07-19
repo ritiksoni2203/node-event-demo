@@ -1,25 +1,42 @@
-const Invitation = require('../models/invitationSchema');
+const invitationService = require('../services/invitationService');
 
-exports.sendInvitation = async (req, res) => {
-    try {
-        const invitation = new Invitation(req.body);
-        await invitation.save();
-    } catch (err) {
-        res.status(400).json({ error: 'Bad Request' });
-    }
-};
+module.exports = {
+    sendInvitation: async (req, res) => {
+        try {
+            const { event, sender, recipient, message } = req.body;
+            const invitationRecord = await invitationService.sendInvitation(event, sender, recipient, message);
+            res.status(201).json(invitationRecord);
+        } catch (err) {
+            console.log(err);
+            res.status(404).json({ error: err.message });
+        }
+    },
 
-exports.acceptInvitation = async (req, res) => {
-    try {
-        const { invitationId } = req.params;
-        const invitation = await Invitation.findByIdAndUpdate(
-            invitationId,
-            { status: 'accepted' },
-            { new: true }
-        );
-        res.json(invitation);
-    }
-    catch (err) {
-        res.status(400).json({ error: 'Bad request' });
-    }
+    getInvitations: async (req, res) => {
+        try {
+            const { userId } = req;
+            const invitations = await invitationService.getInvitationsByRecipient(userId);
+            const response = {
+                status: true,
+                message: 'All invitations fetched successfully.',
+                data: invitations,
+            };
+            res.json(response);
+        } catch (err) {
+            console.log(err);
+            res.status(404).json({ error: err.message });
+        }
+    },
+
+    acceptInvitation: async (req, res) => {
+        try {
+            const { invitationId } = req.params;
+            const { status } = req.body;
+            const invitation = await invitationService.acceptInvitation(invitationId, status);
+            res.json(invitation);
+        } catch (err) {
+            console.log(err);
+            res.status(404).json({ error: err.message });
+        }
+    },
 };

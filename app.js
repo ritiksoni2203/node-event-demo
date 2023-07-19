@@ -18,6 +18,7 @@ const invitationRouter = require('./routes/invitation');
 
 app.use('/auth', authRouter);
 app.use('/event', eventRouter);
+app.use('/invitation', invitationRouter);
 
 app.listen(port, () => {
   console.log(`Listening on port ${port}`);
